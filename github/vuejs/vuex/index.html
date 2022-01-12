@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vuex2</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex@3.6.2/dist/vuex.js"></script>
+</head>
+<body>
+<div id="app">
+    <button @click="inc">+</button>
+    <span>{{ count() }}</span>
+    <button @click="dec">-</button>
+</div>
+
+<script type="module">
+    Vue.use(Vuex)
+    console.log(Vuex)
+    const store = new Vuex.Store({
+        namespaced: 1,
+        state: {
+            count: 0,
+        },
+        mutations: {
+            increment(state) {
+                state.count++
+            },
+            decrement(state) {
+                state.count--
+            }
+        }
+    })
+    console.log(store)
+    new Vue({
+        el: '#app',
+        store,
+        computed: {
+        },
+        methods: {
+            inc() {
+                this.$store.commit('increment')
+            },
+            dec() {
+                this.$store.commit('decrement')
+            },
+            getCount() {
+                return this.$store.state.count
+            },
+            ...Vuex.mapState(['count'])
+        }
+    })
+
+    const root = {
+        state: {},
+        _rawModule: {
+            mutations: {},
+            actions: {},
+            getters: {},
+        },
+        _children: {
+            a: {
+                state: {},
+                _rawModule: {},
+                _children: {
+                    c: {
+                        state: {},
+                        _rawModule: {},
+                        _children: {
+                            d: {
+                                state: {},
+                                _rawModule: {},
+                                _children: {
+
+                                },
+                                runtime: true,
+                            }
+                        },
+                        runtime: true,
+                    }
+                },
+                runtime: true,
+            },
+            b: {
+                state: {},
+                _rawModule: {},
+                _children: {
+
+                },
+                runtime: true,
+            }
+        },
+        runtime: false,
+    }
+
+    const path = ['a', 'c', 'd']
+</script>
+</body>
+</html>
