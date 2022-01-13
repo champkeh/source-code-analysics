@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pinia Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vue/composition-api@1.4.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-demi"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pinia"></script>
+</head>
+<body>
+<div id="app">
+    <ul>
+        <li v-for="todo in filteredTodos" :key="todo.id">{{todo.text}}</li>
+    </ul>
+    <form @submit.prevent>
+        <input type="text" v-model="text" autofocus>
+        <button type="submit" @click="add">add</button>
+    </form>
+    <button @click="createStore">create store</button>
+</div>
+
+<script type="module">
+    import {useTodos} from './store.js'
+
+    const {PiniaVuePlugin, createPinia, mapState, mapActions} = Pinia
+    const pinia = createPinia()
+    Vue.use(PiniaVuePlugin)
+
+    new Vue({
+        el: '#app',
+        pinia,
+        data() {
+            return {
+                text: ''
+            }
+        },
+        computed: mapState(useTodos, ['filteredTodos', 'filter']),
+        methods: {
+            ...mapActions(useTodos, ['addTodo']),
+            add() {
+                if (this.text) {
+                    this.addTodo(this.text)
+                    this.text = ''
+                }
+            },
+            createStore() {
+                console.log(useTodos())
+            }
+        }
+    })
+</script>
+</body>
+</html>
