@@ -103,3 +103,52 @@ function makeLocalGetters(store, namespace) {
 比如，当你访问`context.getters.finishedTodos`时，假如这个模块的路径是`['foo', 'bar']`，那么会过滤出`store.getters`上所有以`foo/bar/`开头的`getter`，组成一个临时的代理对象，以这个命名空间为键保存在缓存对象`_makeLocalGettersCache`中。访问这个代理对象的`finishedTodos`属性时，实际访问的是`store.getters['foo/bar/finishedTodos']`。
 
 > 由上可知，只有在第一次访问模块的`getters`属性时，才会去创建这个`getters`代理对象，后续的访问都是使用的缓存技术。只有当`store.getters`发生变化的时候，才会清除这个缓存。也就是`resetStoreVM`中所做的那样。
+
+#### 关于`mapXXX`这些 helper
+
+在使用`Vuex`的时候一直有一个困惑，使用`mapState`、`mapGetters`、`mapMutations`等这些 helper 的时候，应该把返回值放在`computed`里面，还是放在`methods`里面？
+
+`mapState`函数如下：
+```js
+function mapState(namespace, states) {
+    const res = {}
+    normalizeMap(states).forEach(({ key, val }) => {
+        res[key] = function mappedState () {
+            let state = this.$store.state
+            let getters = this.$store.getters
+            if (namespace) {
+                const module = getModuleByNamespace(this.$store, 'mapState', namespace)
+                if (!module) {
+                    return
+                }
+                state = module.context.state
+                getters = module.context.getters
+            }
+            return typeof val === 'function'
+                ? val.call(this, state, getters)
+                : state[val]
+        }
+        // mark vuex getter for devtools
+        res[key].vuex = true
+    })
+    return res
+}
+```
+可以看到，`mapState`最终返回的是一个全新的对象，这个对象里面每一个属性的值都是一个函数(`mappedState`函数，**注意这个函数是没有参数的**)，比如，你像下面这样调用：
+```js
+mapState({a: state => state.a, b: state => state.b})
+```
+那么，它的返回值是这样的：
+```js
+const res = {
+    a() {
+        return this.$store.state.a
+    },
+    b() {
+        return this.$store.state.b
+    }
+}
+```
+这样的一个对象，既可以放在`computed`里面，也可以放在`methods`里面，效果没有任何区别。
+那为什么官方文档都是放在`computed`里面呢？因为访问`state`和`getters`其实跟访问`data`和`computed`没什么区别，并且底层也是用`data`和`computed`实现的，所以就放在了`computd`上面，使用的时候不需要带括号。
+而`mapMutations`和`mapActions`分别是对`commit`和`dispatch`的封装，他们都需要参数，所以需要放在`methods`里面。
