@@ -10,7 +10,10 @@
 3. 需要遵循特定的模式使用。(比如修改状态只能通过`commit mutation`)
 
 
-`Vuex`既是协议，又是实现。说它是协议，是因为它参考了`Flux`协议，规定了数据的访问和修改的约定，即数据访问通过在计算属性中返回`Store`的状态，修改数据通过在组件方法中提交`mutation`。说它是实现，是因为它实现了`mapGetters/mapState`等辅助工具。
+`Vuex`既是`pattern`，又是`library`。说它是`pattern`，是因为它参考了[Flux][Flux]，规定了数据的访问和修改的模式，即数据访问通过在计算属性中返回`Store`的状态，修改数据通过在组件方法中提交`mutation`。说它是`library`，是因为它实现了`mapGetters/mapState`等辅助工具。
+
+[Flux]: https://facebook.github.io/flux/
+
 
 ### `Vuex`状态的响应式原理
 `Vuex3`借助`Vue`的数据响应式功能，将`Store`中的状态(state)保存到`Vue`实例的`data`内部，变成响应式的，然后再把`getters`代理到`Vue`实例内部的计算属性上，也实现了响应式功能，同时还拥有了缓存功能。
@@ -152,3 +155,4 @@ const res = {
 这样的一个对象，既可以放在`computed`里面，也可以放在`methods`里面，效果没有任何区别。
 那为什么官方文档都是放在`computed`里面呢？因为访问`state`和`getters`其实跟访问`data`和`computed`没什么区别，并且底层也是用`data`和`computed`实现的，所以就放在了`computd`上面，使用的时候不需要带括号。
 而`mapMutations`和`mapActions`分别是对`commit`和`dispatch`的封装，他们都需要参数，所以需要放在`methods`里面。
+
