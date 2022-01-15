@@ -41,11 +41,13 @@
 直接在项目中全局搜索 `source-map` 的引入，没有搜到任何信息，好像是这个项目没有直接引用`source-map`这个库。
 
 而搜索`source-map-support`的引用，只在`cli/cli.ts`文件中发现有引用：
+
 ![source-map-support的引用](assets/require-source-map-support.png)
 
 可以看到，在执行 rollup 相关命令之前，安装了`source-map-support`这个库，也就是为 Node 进程提供 SourceMap 支持。至于这个库是如何使用 V8 的相关API实现这个功能，我后面会单独进行分析。
 
 接着，再搜索一下`sourcemap-codec`这个库的引用：
+
 ![sourcemap-codec的引用](assets/require-sourcemap-codec.png)
 
 可以看到，这个库也只在`src/utils/decodedSourcemap.ts`文件中有引用，而这个文件唯一导出的就是一个`decodedSourcemap`函数。这个函数也很简单，就是将`map`中的`mappings`字段解码。
@@ -56,7 +58,9 @@
 
 继续搜索`soucemap`关键字，发现项目中有引用一个`magic-string`可能跟SourceMap的生成有关。
 在npm仓库搜索时发现：
+
 ![magic-string包描述](assets/magic-string-description.png)
+
 由此可知，rollup 对 SourceMap 的处理都封装在了`magic-string`这个包里面了。
 
 那么接下来，我们就来看一下`magic-string`是如何处理 SourceMap 的。
