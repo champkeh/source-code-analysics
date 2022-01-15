@@ -70,3 +70,6 @@
 ![magic-string依赖](assets/magic-string-dependency.png)
 
 还是上面那几个依赖。
+不过值得注意的是，只有`sourcemap-codec`是运行时依赖，其他两个都是开发依赖。通过查看代码得知，SourceMap 的生成并没有借助`source-map`这个库，而是`magic-string`内部生成的，引入这个库只是为了验证生成的 SourceMap 是正确的。
+
+至于`magic-string`内部是如何生成 SourceMap 的，可以查看`MagicString#generateDecodedMap`这个函数的实现。
