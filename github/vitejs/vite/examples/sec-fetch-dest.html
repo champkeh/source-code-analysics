@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sec-Fetch-Dest Header</title>
+  </head>
+  <body>
+    <script src="sec-fetch-dest.html"></script>
+  </body>
+</html>
+
+<!--
+以 .html 结尾的请求，Sec-Fetch-Dest 这个请求头不一定是 document，要看这个请求是如何发起的,
+如果是放在 script 的 src 属性上，那这个头就是 script。
+具体可以查看文档: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Dest
+-->
